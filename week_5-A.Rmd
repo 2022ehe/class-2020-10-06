@@ -100,7 +100,15 @@ a) On a Google sheet or other spreadsheet, create an ideal Preceptor Table which
 
 b) Does it make sense to calculate an average causal effect?
 
+Not really, because there are some states where even if he didn't campaign, 
+he'd still win. There are so many confoudning variables that it wouldn't make
+much sense. Advertising would only work in swing states.
+
 c) There are two approaches Biden might take to determine which states to use the campaign in. He could randomize. He could select states which, in his judgment, do the most to increase his odds of winning the presidency. Which should he do?
 
+Spend the most on swing states where the estimand is the greatest
+
 d) Assume he randomized. What conclusions might we be able to draw after the election? How would we draw them.
+
+If he won, 
 
