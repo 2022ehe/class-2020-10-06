@@ -6,6 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
+library(readxl)
 ```
 
 
@@ -13,7 +14,32 @@ library(tidyverse)
 
 **Prompt:** Create a graphic of the posterior distribution of the [538 forecast](https://projects.fivethirtyeight.com/2020-election-forecast/) for Biden's electoral vote total. Recall the example given in Chapter 5 of *The Primer*.
 
+```{r sc1}
+post <- read_csv('data_538/election-forecasts-2020/presidential_ev_probabilities_2020.csv',
+                 col_type = cols(cycle = col_double(),
+                                branch = col_character(),
+                                model = col_character(),
+                                modeldate = col_character(),
+                                candidate_inc = col_character(),
+                                candidate_chal = col_character(),
+                                candidate_3rd = col_logical(),
+                                evprob_inc = col_double(),
+                                evprob_chal = col_double(),
+                                evprob_3rd = col_logical(),
+                                total_ev = col_double(),
+                                timestamp = col_character(),
+                                simulations = col_double()))
 
+post %>%
+  select(candidate_inc, candidate_chal, evprob_inc, evprob_chal, total_ev) %>%
+  ggplot(aes(x = total_ev, y = evprob_chal)) +
+  geom_col() + 
+  labs(title = 'Posterior Probability Distribution Based on FiveThirtyEight Forecast',
+       subtitle = '2020 Presidential Election',
+       x = 'Total Electoral Vote for Biden',
+       y = 'Probability')
+
+```
 
 ### Scene 2
 
@@ -25,6 +51,7 @@ b) Assume that Biden implements the campaign, create the actual Preceptor Table 
 
 c) What does the actual Preceptor Table look like now?
 
+https://docs.google.com/spreadsheets/d/1L-fvPHRV2kTtcphpHIrzhJBuXl3UXwd6QZ8xaqPEaVc/edit?usp=sharing
 
 
 
@@ -33,15 +60,36 @@ c) What does the actual Preceptor Table look like now?
 **Prompt:** Probability distributions are confusing. Using 538's posterior probability distribution of Biden's electoral votes, answer the following question. (Recall that there are 538 total electoral votes. For this exercise, you may assume that every EV goes to either Biden or Trump. In other words, we are, by assumption, eliminating the possibility of a third party candidate winning any votes.)
 
 
-a) What is the probability that Biden wins more than 300 electoral votes?
+a) What is the probability that Biden wins more than 300 electoral votes? 
+```{r sc3a}
+post %>%
+  filter(total_ev >= 300) %>%
+  summarize(biden_300 = sum(evprob_chal))
+```
 
 b) What is the probability that Biden wins exactly 531 electoral votes? Is this answer consistent with your answer in a)?
 
+```{r sc3b}
+post %>%
+  filter(total_ev == 531) %>%
+  summarize(biden_531 = sum(evprob_chal))
+```
+
 c) What is the probability of a "very close" election, defined as Biden winning between 269 and 289 electoral votes, inclusive?
+
+```{r sc3c}
+post %>%
+  filter(total_ev >= 269 & total_ev <= 289) %>%
+  summarize(biden_close = sum(evprob_chal))
+```
 
 d) How many unique electoral vote totals does 538 view as impossible for Biden to achieve? Some of these are truly impossible. Given an example of one of these. Why does 538 think that some vote totals, while theoretically possible, should be given zero probability in its posterior?
 
-
+```{r sc3d}
+post %>%
+  filter(evprob_chal == 0) %>%
+  select(total_ev)
+```
 
 
 ### Scene 4
